@@ -31,4 +31,10 @@ async function sendVerificationEmail(email, otp){
   }
 }
 
+// pre-middleware
+OTPSchema.pre("save", async function(next){
+  await sendVerificationEmail(this.email, this.otp);
+  next();
+});
+
 export const OTP = mongoose.model("OTP", OTPSchema);
