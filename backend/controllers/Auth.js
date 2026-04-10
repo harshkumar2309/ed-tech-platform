@@ -3,6 +3,8 @@ import { Profile } from "../models/Profile.js";
 import { OTP } from "../models/OTP.js";
 import otpGenerator from "otp-generator";
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+dotenv.config();
 
 
 // send otp
@@ -160,5 +162,64 @@ export const signUp = async (req, res) => {
 }
 
 // login
+export const login = async (req, res) => {
+    try{
+        // fetch data
+        const {email, password} = req.body;
 
+        // validate data
+        if(!email || !password){
+            return res.status(403).json({
+                success: false,
+                message: 'All fields are required, please fill all the details.'
+            });
+        }
+
+        // check if user exists
+        const user = await User.findOne({email});
+        if(!user){
+            return res.status(401).json({
+                success: false,
+                message: 'User is not registered, please signup first.'
+            });
+        }
+
+        // generate token after password matching
+        if(await bcrypt.compare(password, user.password)){
+            const payload = {
+                email: user.email,
+                id: user._id,
+                role: user.role,
+            }
+            const token = jwt.sign(payload, process.env.JWT_SECRET, {
+                expiresIn: "2h",
+            });
+            user.token = token;
+            user.password = undefined;
+
+            // create cookie and send response
+            const options = {
+                expires: new Date(Date.now() + 3*24*60*60*1000),
+            }
+            res.cookie("token", token, options).status(200).json({
+                success: true,
+                token,
+                user,
+                message: 'Logged in successfully.'
+            });
+        }
+        else{
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid password.'
+            })
+        }
+    } catch(error){
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Login failure, please try again.'
+        });     
+    }
+}
 // change password
