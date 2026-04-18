@@ -1,6 +1,7 @@
 import { User } from "../models/User.js";
 import { Profile } from "../models/Profile.js";
 import { OTP } from "../models/OTP.js";
+import { mailSender } from "../utils/mailSender.js";
 import otpGenerator from "otp-generator";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
@@ -222,4 +223,73 @@ export const login = async (req, res) => {
         });     
     }
 }
+
 // change password
+export const changePassword = async (req, res) => {
+    try{
+      // fetch data
+      const { email, oldPassword, newPassword, confirmPassword } = req.body;
+
+      // validate data
+      if (!email || !oldPassword || !newPassword || !confirmPassword) {
+        return res.status(400).json({
+          success: false,
+          message: "All fields are required, please fill all the details.",
+        });
+      }
+
+      // check if user exist
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found.",
+        });
+      }
+
+      // verify newPassword and confirmPassword matches
+      if (newPassword !== confirmPassword) {
+        return res.status(401).json({
+          success: false,
+          message:
+            "New Password and Confirm Password do not match, please re-enter them correctly.",
+        });
+      }
+
+      // verify old password
+      if (await bcrypt.compare(oldPassword, user.password)) {
+        // hash new password
+        const newHashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // update password in DB
+        user.password = newHashedPassword;
+        await user.save();
+
+        // send confirmation mail
+        await mailSender(
+            user.email,
+            "Password Updated Successfully",
+            `<h2>Password Updated</h2>
+            <p>Your password has been changed successfully.</p>
+            <p>If this wasn't you, please contact support immediately.</p>`,
+        ).catch(err => console.log("Mail error:", err));
+
+        return res.status(200).json({
+          success: true,
+          message: "Password changed successfully",
+        });
+      } else {
+        return res.status(401).json({
+          success: false,
+          message:
+            "Old Password entered is incorrect, please re-enter old password.",
+        });
+      }
+    } catch(error){
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to change password, please try again.'
+        });
+    }
+} 
