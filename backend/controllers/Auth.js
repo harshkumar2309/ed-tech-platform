@@ -185,13 +185,13 @@ export const login = async (req, res) => {
             });
         }
 
-        // generate token after password matching
+        // generate JWT token after password matching
         if(await bcrypt.compare(password, user.password)){
             const payload = {
-                email: user.email,
-                id: user._id,
-                role: user.role,
-            }
+              email: user.email,
+              id: user._id,
+              accountType: user.accountType,
+            };
             const token = jwt.sign(payload, process.env.JWT_SECRET, {
                 expiresIn: "2h",
             });

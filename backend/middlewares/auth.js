@@ -40,7 +40,39 @@ export const auth = async (req, res, next) => {
 }
 
 // isStudent
+export const isStudent = async (req, res, next) => {
+    try{
+        if(req.user.accountType !== "Student"){
+            return res.status(401).json({
+                success: false,
+                message: 'This is a protected route for Students only',
+            });
+        }
+        next();
+    } catch(error){
+        return res.status(500).json({
+            success: false,
+            message: 'User role cannot be verified, please try again',
+        })
+    }
+} 
 
 // isInstructor
+export const isInstructor = async (req, res, next) => {
+  try {
+    if (req.user.accountType !== "Instructor") {
+      return res.status(401).json({
+        success: false,
+        message: "This is a protected route for Instructor only",
+      });
+    }
+    next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "User role cannot be verified, please try again",
+    });
+  }
+};
 
 // isAdmin
