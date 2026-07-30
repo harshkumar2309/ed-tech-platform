@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import { mailSender } from "../utils/mailSender";
-
+import { mailSender } from "../../utils/mailSender.js";
 
 const OTPSchema = new mongoose.Schema({
   email: {
@@ -22,9 +21,7 @@ const OTPSchema = new mongoose.Schema({
 async function sendVerificationEmail(email, otp){
   try{
     const mailResponse = await mailSender(email, "Verification Email from SkillForge", otp);
-
     console.log("Email sent Successfully: ", mailResponse);
-
   } catch(error){
     console.log("Error while sending mail: ", error);
     throw error;
