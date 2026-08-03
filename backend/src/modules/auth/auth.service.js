@@ -64,7 +64,7 @@ export const generateAndSaveOTP = async (email) => {
 
 
 // ──────────────────────────────────────────────
-// 2. Register a new user
+// 2. Register a new user / SIGN UP
 // ──────────────────────────────────────────────
 export const registerUser = async ({
     firstName,
