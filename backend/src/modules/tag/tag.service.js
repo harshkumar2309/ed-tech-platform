@@ -12,18 +12,18 @@ const throwError = (statusCode, message) => {
   throw error;
 };
 
-export const createTag = async (name, description) => {
-    // validate data
-    if(!name || !description) {
-        throwError(404, "All fields are required");
-    };
+export const createTagService = async (name, description) => {
+  // validate data
+  if (!name || !description) {
+    throwError(404, "All fields are required");
+  }
 
-    // create entry in db
-    const tagDetails = await Tag.create({
-      tagName: name,
-      tagDescription: description,
-    });
+  // create entry in db
+  const tagDetails = await Tag.create({
+    tagName: name,
+    tagDescription: description,
+  });
 
-    console.log( tagDetails );
-    return tagDetails;
-}
+  console.log(tagDetails);
+  return tagDetails;
+};

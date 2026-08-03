@@ -1,8 +1,8 @@
 import {
-    generateAndSaveOTP,
-    registerUser,
-    loginUser,
-    changeUserPassword,
+    generateAndSaveOTPService,
+    registerUserService,
+    loginUserService,
+    changeUserPasswordService,
 } from "./auth.service.js";
 
 
@@ -13,7 +13,7 @@ export const sendOTP = async (req, res) => {
     try {
         const { email } = req.body;
 
-        const otp = await generateAndSaveOTP(email);
+        const otp = await generateAndSaveOTPService(email);
 
         // return response successfully
         res.status(200).json({
@@ -47,15 +47,15 @@ export const signUp = async (req, res) => {
             otp,
         } = req.body;
 
-        const newUser = await registerUser({
-            firstName,
-            lastName,
-            email,
-            password,
-            confirmPassword,
-            accountType,
-            contactNumber,
-            otp,
+        const newUser = await registerUserService({
+          firstName,
+          lastName,
+          email,
+          password,
+          confirmPassword,
+          accountType,
+          contactNumber,
+          otp,
         });
 
         // return response
@@ -81,7 +81,7 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const { token, user } = await loginUser(email, password);
+        const { token, user } = await loginUserService(email, password);
 
         // create cookie and send response
         const options = {
@@ -110,7 +110,7 @@ export const changePassword = async (req, res) => {
     try {
         const { email, oldPassword, newPassword, confirmPassword } = req.body;
 
-        await changeUserPassword(email, oldPassword, newPassword, confirmPassword);
+        await changeUserPasswordService(email, oldPassword, newPassword, confirmPassword);
 
         return res.status(200).json({
             success: true,

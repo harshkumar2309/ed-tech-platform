@@ -1,14 +1,14 @@
 import { Tag } from "../tag/tag.model.js";
-import { createTag } from "../tag/tag.service.js"
+import { createTagService } from "../tag/tag.service.js";
 
 // create tag handler
-export const tag = async (req, res) => {
+export const createTag = async (req, res) => {
     try{
         // fetch data
         const { name, description } = req.body;
 
         // create tag service
-        const tagDetails = await createTag(name, description);
+        const tagDetails = await createTagService(name, description);
 
         // return response
         return res.status(200).json({

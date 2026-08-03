@@ -23,7 +23,7 @@ const throwError = (statusCode, message) => {
 // ──────────────────────────────────────────────
 // 1. Generate & save OTP
 // ──────────────────────────────────────────────
-export const generateAndSaveOTP = async (email) => {
+export const generateAndSaveOTPService = async (email) => {
 
     // check if user already exist
     const checkUser = await User.findOne({ email });
@@ -66,7 +66,7 @@ export const generateAndSaveOTP = async (email) => {
 // ──────────────────────────────────────────────
 // 2. Register a new user / SIGN UP
 // ──────────────────────────────────────────────
-export const registerUser = async ({
+export const registerUserService = async ({
     firstName,
     lastName,
     email,
@@ -133,7 +133,7 @@ export const registerUser = async ({
 // ──────────────────────────────────────────────
 // 3. Log in a user
 // ──────────────────────────────────────────────
-export const loginUser = async (email, password) => {
+export const loginUserService = async (email, password) => {
 
     // validate data
     if (!email || !password) {
@@ -169,7 +169,7 @@ export const loginUser = async (email, password) => {
 // ──────────────────────────────────────────────
 // 4. Change password
 // ──────────────────────────────────────────────
-export const changeUserPassword = async (email, oldPassword, newPassword, confirmPassword) => {
+export const changeUserPasswordService = async (email, oldPassword, newPassword, confirmPassword) => {
 
     // validate data
     if (!email || !oldPassword || !newPassword || !confirmPassword) {

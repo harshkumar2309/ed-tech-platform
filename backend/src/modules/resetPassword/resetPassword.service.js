@@ -17,14 +17,17 @@ const throwError = (statusCode, message) => {
 // 1. Generate reset-password token, save to DB,
 //    and email the reset link to the user
 // ──────────────────────────────────────────────
-export const generateResetToken = async (email) => {
+export const generateResetTokenService = async (email) => {
+    
   // validate email
   const user = await User.findOne({ email: email });
   if (!user) {
     throwError(404, "Your Email is not registered with us.");
   }
+
   // generate token
   const token = crypto.randomBytes(32).toString("hex");
+  
   // update user by adding token & expiration time
   const updatedDetails = await User.findOneAndUpdate(
     { email: email },
@@ -34,8 +37,10 @@ export const generateResetToken = async (email) => {
     },
     { new: true },
   );
+
   // create url
   const url = `http://localhost:3000/update-password/${token}`;
+
   // send email containing the link
   await mailSender(email, "Password Reset Link", `Password Reset Link: ${url}`);
   return updatedDetails;
@@ -46,7 +51,7 @@ export const generateResetToken = async (email) => {
 // 2. Reset the password using the token
 // ──────────────────────────────────────────────
 
-export const resetUserPassword = async (password, confirmPassword, token) => {
+export const resetUserPasswordService = async (password, confirmPassword, token) => {
 
   // validate data
   if (password !== confirmPassword) {
@@ -68,7 +73,7 @@ export const resetUserPassword = async (password, confirmPassword, token) => {
 
   // Hash Password
   const hashedPassword = await bcrypt.hash(password, 10);
-  
+
   // update password
   await User.findOneAndUpdate(
     { token: token },
